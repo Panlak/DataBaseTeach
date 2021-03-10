@@ -8,8 +8,9 @@ CREATE TABLE Customer
 )ENGINE = InnoDB;
 
 INSERT INTO Customer (CustomerName,CustomerPhone,CustomerEmail)
-VALUES#("Борис",380993550562,"ovasilenko@rivaloo.com"),
-	#("Руслан",380990872179,"antonenko.oksan@homemortgagedirectlender.com"),
-	#("Євген",380992661392,"kravcenko.dmitr@israel-international.de"),
+VALUES("Борис",380993550562,"ovasilenko@rivaloo.com"),
+	("Руслан",380990872179,"antonenko.oksan@homemortgagedirectlender.com"),
+	("Євген",380992661392,"kravcenko.dmitr@israel-international.de"),
      ("Данил",0999822606,"ludmila.ivancen@touchsalabai.org"),
      ("Андрій",0999502274,"miroslav72@baotaochi.com");
+SELECT * FROM Customer;
