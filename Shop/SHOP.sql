@@ -11,6 +11,6 @@ CREATE TABLE SHOP
     FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID)  # 2 зовнішній ключ
 )ENGINE = InnoDB;
 
-INSERT INTO SHOP (IdBook,CustomerID) VALUES(2,3);
+INSERT INTO SHOP (IdBook,CustomerID) VALUES(5,5);
 
 SELECT * FROM SHOP;

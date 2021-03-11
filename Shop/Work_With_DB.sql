@@ -1,3 +1,5 @@
+
+CREATE DATABASE librarytests;
 USE librarytests;
 
 SET  @num := 0;
@@ -68,12 +70,14 @@ SELECT
 shop.CustomerID,
 CustomerName,
 CustomerPhone,
-SUM(Price)  as MoneySpent
+SUM(Price)  as MoneySpent,
+COUNT(library.IdBook) as BoughtBooks
 FROM library,SHOP,customer
 WHERE  
 shop.CustomerID = customer.CustomerID AND
 library.IdBook  = shop.IdBook 
-GROUP BY shop.CustomerID;
+GROUP BY shop.CustomerID
+ORDER BY MoneySpent DESC;
 /*----------------------------------------------*/
 
 
