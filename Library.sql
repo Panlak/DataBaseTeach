@@ -1,3 +1,4 @@
+CREATE DATABASE library;
 USE library;
 SELECT * FROM books;
 DESCRIBE books;
