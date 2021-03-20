@@ -36,10 +36,11 @@ VALUES
 #("Bears","Canada"),
 #("Penguins","France"),
 #("liquid","America"),
-("Bannermen","Turkey"),
-("Outliers","Canada"),
-("Titans","Slovenia"),
-("Vikings","Netherlands");
+#("Bannermen","Turkey"),
+#("Outliers","Canada"),
+#("Titans","Slovenia"),
+#("Vikings","Netherlands")
+("Avengers","Ukraine");
 
 SELECT Command_Id,Command_Name,Country_Name FROM Сommands,Сountries WHERE Country_Name_Team = Country_Name;
 
