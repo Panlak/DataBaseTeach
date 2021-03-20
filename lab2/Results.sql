@@ -73,7 +73,7 @@ AND Team_NAME = Сommands.Command_Name;
 
 /*Знайти інформацію про змагання, в яких брали участь команди зазначеної країни.*/
 SELECT Team_NAME,EnemyTeam_NAME,TypeOfCompetition.Competition_Name,DateEvent,Result
- FROM Сountries,TypeOfCompetition,Сommands,DateOfCompetition,Results
+FROM Сountries,TypeOfCompetition,Сommands,DateOfCompetition,Results
 WHERE 
 Country_Name_Team = "Ukraine" AND  
 Results.DateOfCompetition_Event = DateOfCompetition.DateEvent
@@ -85,34 +85,23 @@ group by Result_Id;
 
 
 /* Знайти країну, де проводилося максимальне число змагань за вказаний період. */
-SELECT Team_NAME,EnemyTeam_NAME,TypeOfCompetition.Competition_Name,DateEvent,Result,Сountries.Country_Name
+SELECT Сountries.Country_Name,count(DateOfCompetition.Country_Name) as Count_Competition 
 FROM Сountries
 INNER JOIN Сommands 		 
 INNER JOIN Results 			 ON  EnemyTeam_NAME = Command_Name
 INNER JOIN DateOfCompetition ON  DateOfCompetition.DateEvent = DateOfCompetition_Event and DateOfCompetition.Country_Name = Сountries.Country_Name
 INNER JOIN TypeOfCompetition ON TypeOfCompetition.Competition_Name = DateOfCompetition.Competition_Name
-WHERE DateOfCompetition.DateEvent  BETWEEN '2023-05-06' AND '2030-05-26';
- 
+WHERE DateOfCompetition.DateEvent  BETWEEN '2023-05-06' AND '2030-05-26'
+group by Сountries.Country_Name
+order by Count_Competition desc limit 1;
+/*-------------------*/
+
+/*Знайти всі країни, де проводилися Чемпіонати світу із зазначеного виду спорту*/
+
+
 
 
 /*-------------------*/
-
-
-SELECT Team_NAME,EnemyTeam_NAME,TypeOfCompetition.Competition_Name,DateEvent,Result
-FROM Сountries
-INNER JOIN Сommands 		 
-INNER JOIN Results 			 ON  EnemyTeam_NAME = Command_Name
-INNER JOIN DateOfCompetition ON  DateOfCompetition.DateEvent = DateOfCompetition_Event and DateOfCompetition.Country_Name = Сountries.Country_Name
-INNER JOIN TypeOfCompetition ON TypeOfCompetition.Competition_Name = DateOfCompetition.Competition_Name
-AND DateOfCompetition.Country_Name = (SELECT DateOfCompetition.Country_Name FROM DateOfCompetition WHERE (SELECT MAX((SELECT COUNT(DateOfCompetition.Country_Name )FROM DateOfCompetition))FROM DateOfCompetition) LIMIT 1)
-WHERE DateOfCompetition.DateEvent  BETWEEN '2023-05-06' AND '2030-05-26';
-
-
-
-SELECT Command_Name,Country_Name,Competition_Name,DateEvent,EnemyTeam_Id,Team_Id,Result FROM Results,Сommands,DateOfCompetition,TypeOfCompetition,Сountries
-WHERE 
-EnemyTeam_Id = Сommands.Command_Id AND Team_Id = Сommands.Command_Id; 
-
 
 
 
