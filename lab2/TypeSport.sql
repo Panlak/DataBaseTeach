@@ -1,13 +1,12 @@
 USE sportscompetitions;
 
-
+DROP TABLE TypeSport;
 CREATE TABLE TypeSport
 (
 	id_Sport INT NOT NULL AUTO_INCREMENT,
     NAME_Sport VARCHAR(40) NOT NULL,
-    PRIMARY KEY (id_Sport,NAME_Sport)
+    PRIMARY KEY (id_Sport)
 );
-CREATE INDEX NAME_Sport ON TypeSport(NAME_Sport);
 
 INSERT INTO TypeSport (NAME_Sport)
 VALUES

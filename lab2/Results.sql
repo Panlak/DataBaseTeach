@@ -8,17 +8,17 @@ DROP TABLE Results;
 CREATE TABLE Results
 (
 	Result_Id INT NOT NULL AUTO_INCREMENT,
-	EnemyTeam_NAME VARCHAR(40) NOT NULL,
-    Team_NAME VARCHAR(40) NOT NULL,				 
-	DateOfCompetition_Event DATE NOT NULL,   
+	EnemyTeam_Id VARCHAR(40) NOT NULL,
+    Team_Id VARCHAR(40) NOT NULL,				 
+	DateOfCompetition_Id INT NOT NULL,   
     Result SET('Win','Lose','Draw'),
     PRIMARY KEY (Result_Id),
     CONSTRAINT EnemyTeam_NAME
-    FOREIGN KEY (EnemyTeam_NAME) REFERENCES Сommands(Command_Name),
+    FOREIGN KEY (EnemyTeam_Id) REFERENCES Сommands(Command_Id),
     CONSTRAINT Team_Id
-    FOREIGN KEY(Team_NAME) REFERENCES Сommands(Command_Name),
+    FOREIGN KEY(Team_Id) REFERENCES Сommands(Command_Id),
     CONSTRAINT DateOfCompetition
-    FOREIGN KEY (DateOfCompetition_Event) REFERENCES DateOfCompetition(DateEvent)
+    FOREIGN KEY (DateOfCompetition_Id) REFERENCES DateOfCompetition(DateOfCompetition_Id)
 );
 
 ALTER TABLE Results AUTO_INCREMENT = 1;
@@ -49,10 +49,11 @@ VALUES
 ("liquid","Outliers",'2031.6.21','Win'),
 ("Navi","Avengers",'2027.10.15','lose'),
 ("Avengers","Dynamo",'2029-06-17','Draw');
+
 SELECT *
 FROM Results,Сountries,TypeSport,DateOfCompetition,Сommands
 WHERE	 
-DateOfCompetition.Type_Sport = TypeSport.NAME_Sport
+	DateOfCompetition.Type_Sport = TypeSport.NAME_Sport
 AND Сountries.Country_Name = DateOfCompetition.Country_Name
 AND  EnemyTeam_NAME = Command_Name
 AND  DateOfCompetition.DateEvent = DateOfCompetition_Event ;
@@ -74,7 +75,6 @@ AND DateEvent > '2027-06-16';
 SELECT Team_NAME,EnemyTeam_NAME,NAME_Sport,DateOfCompetition.Rang_Competition,DateEvent  FROM Results,Сountries,TypeSport,DateOfCompetition,Сommands
 WHERE Team_NAME = "Navi"  
 AND DateOfCompetition.Rang_Competition = 'Чемпіонат_Європи'
-
 AND DateOfCompetition.Type_Sport =TypeSport.NAME_Sport
 AND Сountries.Country_Name = DateOfCompetition.Country_Name
 and EnemyTeam_NAME = Command_Name

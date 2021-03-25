@@ -3,10 +3,8 @@ use sportscompetitions;
 DROP TABLE Сountries;
 CREATE TABLE Сountries
 (
-	Country_ID INT NOT NULL AUTO_INCREMENT,
-    Country_Name VARCHAR(40) NOT NULL,
-    
-    PRIMARY KEY(Country_ID,Country_Name)
+    Country_Name VARCHAR(40) NOT NULL UNIQUE,
+    PRIMARY KEY(Country_Name)
 );
 CREATE INDEX Country_Name ON Сountries(Country_Name);
 SHOW INDEX FROM Сountries;
