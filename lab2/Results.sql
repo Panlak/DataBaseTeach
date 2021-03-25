@@ -8,8 +8,8 @@ DROP TABLE Results;
 CREATE TABLE Results
 (
 	Result_Id INT NOT NULL AUTO_INCREMENT,
-	EnemyTeam_Id VARCHAR(40) NOT NULL,
-    Team_Id VARCHAR(40) NOT NULL,				 
+	EnemyTeam_Id int NOT NULL,
+    Team_Id int NOT NULL,				 
 	DateOfCompetition_Id INT NOT NULL,   
     Result SET('Win','Lose','Draw'),
     PRIMARY KEY (Result_Id),
@@ -25,38 +25,37 @@ ALTER TABLE Results AUTO_INCREMENT = 1;
 
 DELETE FROM Results WHERE Result_Id = 11;
 
-INSERT INTO Results (EnemyTeam_NAME,Team_NAME,DateOfCompetition_Event,Result)
+INSERT INTO Results (EnemyTeam_Id,Team_Id,DateOfCompetition_Id,Result)
 VALUES
+(4,6,2,'Lose'),
+(5,1,4,'Draw'),
+(6,7,3,'Win'),
+(7,2,5,'Lose'),
+(2,3,7,'Win'),
+(8,9,9,'Lose'),
+(10,11,8,'Win'),
+(9,11,10,'Win'),
+(2,6,2,'Win'),
+(2,1,8,'lose'),
+(6,2,8,'Win'),
+(5,2,8,'Win'),
+(9,2,11,'Lose'),
+(3,1,15,'Win'),
+(12,2,15,'Win'),
+(1,6,6,'lose'),
+(8,1,13,'Win'),
+(11,10,14,'Draw'),
+(7,9,15,'Win'),
+(2,12,14,'lose'),
+(12,3,9,'Draw');
 
-("Stars","Penguins",'2022-06-03','Lose'),
-("Bears","TeamSpirit",'2023-06-12','Draw'),
-("Penguins","liquid",'2023-05-06','Win'),
-("liquid","Navi",'2024-05-28','Lose'),
-("Navi","Dynamo",'2030-10-11','Win'),
-("Bannermen","Outliers",'2029-06-17','Lose'),
-("Titans","Vikings",'2027-05-16','Win'),
-("Outliers","Vikings",'2030-05-26','Win'),
-("Navi","Penguins",'2022-06-03','Win'),
-("Navi","TeamSpirit",'2027-05-16','lose'),
-("Penguins","Navi",'2027-05-16','Win'),
-("Bears","Navi",'2027-05-16','Win'),
-("Outliers","Navi",'2027.7.31','Lose'),
-("Dynamo","TeamSpirit",'2032.10.11','Win'),
-("Avengers","Navi",'2032.10.11','Win'),
-("TeamSpirit","Penguins",'2026.10.31','lose'),
-("Bannermen","TeamSpirit",'2027.10.15','Win'),
-("Vikings","Titans",'2029.5.15','Draw'),
-("liquid","Outliers",'2031.6.21','Win'),
-("Navi","Avengers",'2027.10.15','lose'),
-("Avengers","Dynamo",'2029-06-17','Draw');
 
-SELECT *
-FROM Results,Сountries,TypeSport,DateOfCompetition,Сommands
-WHERE	 
-	DateOfCompetition.Type_Sport = TypeSport.NAME_Sport
-AND Сountries.Country_Name = DateOfCompetition.Country_Name
-AND  EnemyTeam_NAME = Command_Name
-AND  DateOfCompetition.DateEvent = DateOfCompetition_Event ;
+select * from Results,Сountries,TypeSport,DateOfCompetition,Сommands
+WHERE 
+Results.DateOfCompetition_Id = DateOfCompetition.DateOfCompetition_Id
+AND Сommands.Command_Id IN (EnemyTeam_Id)
+AND Country_Name_Team = Сountries.Country_Name
+AND DateOfCompetition.id_Sport = TypeSport.id_Sport;
 
 
 SELECT * FROM Results;
@@ -65,32 +64,32 @@ DELETE FROM Results WHERE Result_Id =18;
 
 /* Знайти всі країни, де проводилися Олімпійські ігри після вказаного року. */
 SELECT DateOfCompetition.Country_Name , NAME_Sport ,DateOfCompetition.Rang_Competition, DateEvent FROM Сountries,TypeSport,DateOfCompetition
-WHERE DateOfCompetition.Rang_Competition = 'Олімпійські_ігри'
-AND   DateOfCompetition.Type_Sport =TypeSport.NAME_Sport
-AND   Сountries.Country_Name = DateOfCompetition.Country_Name
-AND DateEvent > '2027-06-16';
+WHERE DateOfCompetition.DateOfCompetition_Id IN
+((SELECT  DateOfCompetition_Id FROM DateOfCompetition WHERE   Rang_Competition = 'Олімпійські_ігри' AND DateOfCompetition.DateEvent > '2027-06-16'))
+AND   DateOfCompetition.id_Sport = TypeSport.id_Sport
+AND   Сountries.Country_Name = DateOfCompetition.Country_Name;
 /*-------------------*/
 
 /* Знайти всіх суперників зазначеної команди в змаганнях заданого рангу */ 
-SELECT Team_NAME,EnemyTeam_NAME,NAME_Sport,DateOfCompetition.Rang_Competition,DateEvent  FROM Results,Сountries,TypeSport,DateOfCompetition,Сommands
-WHERE Team_NAME = "Navi"  
-AND DateOfCompetition.Rang_Competition = 'Чемпіонат_Європи'
-AND DateOfCompetition.Type_Sport =TypeSport.NAME_Sport
+SELECT Team_Id,Command_Name as EnemyTeam,NAME_Sport,DateOfCompetition.Rang_Competition,DateEvent  FROM Results,Сountries,TypeSport,DateOfCompetition,Сommands
+WHERE Team_Id = (SELECT Command_Id FROM Сommands WHERE Command_Name = "Navi")
+AND DateOfCompetition.DateOfCompetition_Id  IN ((SELECT  DateOfCompetition_Id FROM DateOfCompetition WHERE   Rang_Competition = 'Чемпіонат_Європи'))
+AND DateOfCompetition.id_Sport = TypeSport.id_Sport
 AND Сountries.Country_Name = DateOfCompetition.Country_Name
-and EnemyTeam_NAME = Command_Name
-AND DateOfCompetition.DateEvent = DateOfCompetition_Event;
+and EnemyTeam_Id = Сommands.Command_Id
+AND Results.DateOfCompetition_Id = DateOfCompetition.DateOfCompetition_Id;
 /*-------------------*/
 
 /*Знайти інформацію про змагання, в яких брали участь команди зазначеної країни.*/
-SELECT  *
+SELECT  EnemyTeam_Id,Team_Id,DateOfCompetition.Country_Name AS CompetitionCountry,DateOfCompetition.DateEvent
 FROM Results
-INNER JOIN DateOfCompetition ON DateOfCompetition.DateEvent = DateOfCompetition_Event
-INNER JOIN TypeSport ON DateOfCompetition.Type_Sport = TypeSport.NAME_Sport
-INNER JOIN Сountries ON DateOfCompetition.Country_Name = Сountries.Country_Name
-INNER JOIN Сommands on Country_Name_Team  = "Ukraine"  and  Command_Name in (Team_NAME,EnemyTeam_NAME )
-and EnemyTeam_NAME = Command_Name
-AND Team_NAME IN ((SELECT Command_Name FROM Сommands WHERE Country_Name_Team  = "Ukraine"))
-;
+INNER JOIN DateOfCompetition ON Results.DateOfCompetition_Id = DateOfCompetition.DateOfCompetition_Id
+INNER JOIN TypeSport ON DateOfCompetition.id_Sport = TypeSport.id_Sport
+INNER JOIN Сountries ON DateOfCompetition.Country_Name =  Сountries.Country_Name
+INNER JOIN 
+Сommands on Command_Id IN ((SELECT Command_Id FROM Сommands WHERE Country_Name_Team  = "Ukraine"))
+AND EnemyTeam_Id = Command_Id
+AND Team_Id IN ((SELECT Command_Id FROM Сommands WHERE Country_Name_Team  = "Ukraine"));
 /*-------------------*/
 
 
@@ -98,10 +97,11 @@ AND Team_NAME IN ((SELECT Command_Name FROM Сommands WHERE Country_Name_Team  =
 SELECT Сountries.Country_Name,count(DateOfCompetition.Country_Name) as Count_Competition 
 FROM Сountries
 INNER JOIN Сommands 		 
-INNER JOIN Results 			 ON  EnemyTeam_NAME = Command_Name
-INNER JOIN DateOfCompetition ON  DateOfCompetition.DateEvent = DateOfCompetition_Event and DateOfCompetition.Country_Name = Сountries.Country_Name
-INNER JOIN TypeSport ON TypeSport.NAME_Sport = DateOfCompetition.Type_Sport
-WHERE DateOfCompetition.DateEvent  BETWEEN '2023-05-06' AND '2030-05-26'
+INNER JOIN Results 			 ON  EnemyTeam_Id = Command_Id
+INNER JOIN DateOfCompetition ON  results.DateOfCompetition_Id = DateOfCompetition.DateOfCompetition_Id
+and DateOfCompetition.Country_Name =  Сountries.Country_Name
+INNER JOIN TypeSport ON DateOfCompetition.id_Sport = TypeSport.id_Sport
+AND  DateOfCompetition.DateOfCompetition_Id IN ((SELECT DateOfCompetition_Id FROM  DateOfCompetition WHERE DateEvent  BETWEEN '2023-05-06' AND '2030-05-26' ))
 group by Сountries.Country_Name
 order by Count_Competition desc limit 1;
 /*-------------------*/
@@ -110,63 +110,65 @@ order by Count_Competition desc limit 1;
 SELECT distinct Сountries.Country_Name,NAME_Sport,Rang_Competition
  FROM Results,Сountries,TypeSport,DateOfCompetition,Сommands
 WHERE 
-DateOfCompetition.Rang_Competition = 'Чемпіонат_світу' and 
-TypeSport.NAME_Sport = "CSGO"
-AND DateOfCompetition.Type_Sport = TypeSport.NAME_Sport
+DateOfCompetition.DateOfCompetition_Id IN( (SELECT DateOfCompetition_Id FROM DateOfCompetition WHERE  Rang_Competition = 'Чемпіонат_світу'))
+AND TypeSport.id_Sport = (SELECT id_Sport FROM TypeSport WHERE NAME_Sport = "CSGO")
+AND DateOfCompetition.id_Sport = TypeSport.id_Sport
 AND Сountries.Country_Name = DateOfCompetition.Country_Name
-and EnemyTeam_NAME = Command_Name
-AND DateOfCompetition.DateEvent = DateOfCompetition_Event;
+and EnemyTeam_Id = Command_Id
+AND results.DateOfCompetition_Id = DateOfCompetition.DateOfCompetition_Id;
 /*-------------------*/
 
 /*. Знайти всіх суперників зазначеної команди в змаганнях в заданому році*/
-SELECT EnemyTeam_NAME,Team_NAME,Result,DateOfCompetition.Rang_Competition,NAME_Sport,DateOfCompetition_Event
- FROM Results,Сountries,TypeSport,DateOfCompetition,Сommands
+SELECT Command_Name AS EnemyTeam,Team_Id ,Result,DateOfCompetition.Rang_Competition,NAME_Sport,DateOfCompetition.DateEvent
+FROM Results,Сountries,TypeSport,DateOfCompetition,Сommands
 WHERE
-Team_NAME = "Navi"
-AND year(DateOfCompetition_Event) = '2027'
-AND DateOfCompetition.Type_Sport = TypeSport.NAME_Sport
+Team_Id = (SELECT Command_Id FROM Сommands WHERE Command_Name = "Navi")
+AND DateOfCompetition.DateOfCompetition_Id IN ((SELECT DateOfCompetition_Id FROM DateOfCompetition WHERE YEAR(DateEvent) = '2027'))
+AND DateOfCompetition.id_Sport = TypeSport.id_Sport
 AND Сountries.Country_Name = DateOfCompetition.Country_Name
-AND Command_Name = Team_NAME
-AND DateOfCompetition.DateEvent = DateOfCompetition_Event;
+AND EnemyTeam_Id = Сommands.Command_Id
+AND results.DateOfCompetition_Id = DateOfCompetition.DateOfCompetition_Id;
 /*-------------------*/
 
 /*Знайти всі команди, що брали участь в зазначених змаганнях в заданій країні. */
-SELECT EnemyTeam_NAME,Team_NAME,Result,DateOfCompetition.Rang_Competition,NAME_Sport,DateOfCompetition.Country_Name,DateOfCompetition_Event
+SELECT Result_Id,EnemyTeam_Id,Team_Id,Result,DateOfCompetition.Rang_Competition,NAME_Sport,DateOfCompetition.Country_Name as CompetitionCounry,DateOfCompetition.DateEvent
 FROM Results,Сountries,TypeSport,DateOfCompetition,Сommands
 WHERE	 
-DateOfCompetition.Rang_Competition in ('Олімпійські_ігри','Чемпіонат_світу')
-AND DateOfCompetition.Country_Name = "Ukraine"
-AND DateOfCompetition.Type_Sport =TypeSport.NAME_Sport
+DateOfCompetition.DateOfCompetition_Id IN ((SELECT DateOfCompetition_Id FROM DateOfCompetition WHERE Rang_Competition in ('Олімпійські_ігри','Чемпіонат_світу')
+AND DateOfCompetition.Country_Name = "Ukraine"))
+AND DateOfCompetition.id_Sport = TypeSport.id_Sport
 AND Сountries.Country_Name = DateOfCompetition.Country_Name
-and EnemyTeam_NAME = Command_Name
-AND DateOfCompetition.DateEvent = DateOfCompetition_Event;
+and EnemyTeam_Id = Сommands.Command_Id
+AND results.DateOfCompetition_Id = DateOfCompetition.DateOfCompetition_Id
+group by Result_Id;
 /*-------------------*/
 
 /*Знайти всі команди, які брали участь в змаганнях заданого рангу згруповані за видами спорту*/
-SELECT Result_Id,EnemyTeam_NAME,Team_NAME,Result,DateOfCompetition.Rang_Competition,NAME_Sport,DateOfCompetition.Country_Name,DateOfCompetition_Event
- FROM Results,Сountries,TypeSport,DateOfCompetition,Сommands
+SELECT Result_Id,EnemyTeam_Id,Team_Id,Result,DateOfCompetition.Rang_Competition,NAME_Sport,DateOfCompetition.Country_Name,DateOfCompetition.DateEvent
+FROM Results,Сountries,TypeSport,DateOfCompetition,Сommands
 WHERE	 
-DateOfCompetition.Rang_Competition = 'Олімпійські_ігри'
-AND DateOfCompetition.Type_Sport = TypeSport.NAME_Sport
+DateOfCompetition.DateOfCompetition_Id IN ((SELECT DateOfCompetition_Id FROM DateOfCompetition WHERE Rang_Competition = 'Олімпійські_ігри'))
+AND DateOfCompetition.id_Sport = TypeSport.id_Sport
 AND Сountries.Country_Name = DateOfCompetition.Country_Name
-and EnemyTeam_NAME = Command_Name
-AND DateOfCompetition.DateEvent = DateOfCompetition_Event
-group by TypeSport.NAME_Sport,Result_Id;
+and EnemyTeam_Id = Сommands.Command_Id
+AND results.DateOfCompetition_Id = DateOfCompetition.DateOfCompetition_Id
+group by Result_Id
+order by TypeSport.id_Sport;
 /*-------------------*/
 
 
 
 /*Знайти всі команди певної країни, у яких не було виграшів*/
-SELECT Result_Id,EnemyTeam_NAME,Team_NAME,Result,DateOfCompetition.Rang_Competition,NAME_Sport,DateOfCompetition.Country_Name,DateOfCompetition_Event
+SELECT Result_Id,EnemyTeam_Id,Team_Id,Result,DateOfCompetition.Rang_Competition,NAME_Sport,DateOfCompetition.Country_Name,DateOfCompetition.DateEvent
 FROM Results,Сountries,TypeSport,DateOfCompetition,Сommands
 WHERE
-Result != 'Win' 
-AND Country_Name_Team  = "Ukraine"  and  Command_Name in (Team_NAME,EnemyTeam_NAME )
-and EnemyTeam_NAME = Command_Name
-AND Team_NAME IN ((SELECT Command_Name FROM Сommands WHERE Country_Name_Team  = "Ukraine"))
-AND DateOfCompetition.Type_Sport = TypeSport.NAME_Sport
+Result_Id IN ((SELECT Result_Id FROM Results WHERE Result != 'Win' ))
+AND Command_Id IN ((SELECT Command_Id FROM Сommands WHERE Country_Name_Team  = "Ukraine"))
+AND EnemyTeam_Id = Command_Id
+AND Team_Id IN ((SELECT Command_Id FROM Сommands WHERE Country_Name_Team  = "Ukraine"))
+AND DateOfCompetition.id_Sport = TypeSport.id_Sport
 AND Сountries.Country_Name = DateOfCompetition.Country_Name
-and EnemyTeam_NAME = Command_Name
-AND DateOfCompetition.DateEvent = DateOfCompetition_Event;
+and EnemyTeam_Id = Сommands.Command_Id
+AND results.DateOfCompetition_Id = DateOfCompetition.DateOfCompetition_Id;
 /*-------------------*/
 

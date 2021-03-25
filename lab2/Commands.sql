@@ -13,7 +13,7 @@ CREATE TABLE Сommands
 	Command_Id INT NOT NULL AUTO_INCREMENT,
     Command_Name VARCHAR(40) NOT NULL,
     Country_Name_Team VARCHAR(40) NOT NULL,
-    CONSTRAINT СommandspRIMARYkey
+    CONSTRAINT СommandsPRKEY
     PRIMARY KEY(Command_Id),
     CONSTRAINT Сountry 
     FOREIGN KEY(Country_Name_Team) REFERENCES Сountries(Country_Name) # 1 зовнішній ключ
@@ -23,8 +23,6 @@ CREATE INDEX Command_Name ON Сommands(Command_Name);
 
 
 DELETE FROM Сommands WHERE Command_Id = 1;
-
-
 
 
 INSERT INTO Сommands (Command_Name,Country_Name_Team)
