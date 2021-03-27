@@ -23,10 +23,11 @@ CREATE TABLE Results
 
 ALTER TABLE Results AUTO_INCREMENT = 1;
 
-DELETE FROM Results WHERE Result_Id = 11;
+
 
 INSERT INTO Results (EnemyTeam_Id,Team_Id,DateOfCompetition_Id,Result)
 VALUES
+
 (4,6,2,'Lose'),
 (5,1,4,'Draw'),
 (6,7,3,'Win'),
@@ -50,6 +51,7 @@ VALUES
 (12,3,9,'Draw');
 
 
+
 select * from Results,Сountries,TypeSport,DateOfCompetition,Сommands
 WHERE 
 Results.DateOfCompetition_Id = DateOfCompetition.DateOfCompetition_Id
@@ -57,10 +59,12 @@ AND Сommands.Command_Id IN (EnemyTeam_Id)
 AND Country_Name_Team = Сountries.Country_Name
 AND DateOfCompetition.id_Sport = TypeSport.id_Sport;
 
+delete from Results where Result_Id =13 ;
+
 
 SELECT * FROM Results;
 
-DELETE FROM Results WHERE Result_Id =18;
+DELETE FROM Results WHERE Result_Id =1;
 
 /* Знайти всі країни, де проводилися Олімпійські ігри після вказаного року. */
 SELECT DateOfCompetition.Country_Name , NAME_Sport ,DateOfCompetition.Rang_Competition, DateEvent FROM Сountries,TypeSport,DateOfCompetition
@@ -94,16 +98,64 @@ AND Team_Id IN ((SELECT Command_Id FROM Сommands WHERE Country_Name_Team  = "Uk
 
 
 /* Знайти країну, де проводилося максимальне число змагань за вказаний період. */
-SELECT Сountries.Country_Name,count(DateOfCompetition.Country_Name) as Count_Competition 
+
+SELECT (SELECT MAX(fas.count) 
+FROM
+DateOfCompetition,(SELECT COUNT(DateOfCompetition.Country_Name)   as count 
+FROM (((( Сountries
+INNER JOIN Сommands )	 
+INNER JOIN Results 			 ON  EnemyTeam_Id = Command_Id)
+INNER JOIN DateOfCompetition ON  results.DateOfCompetition_Id = DateOfCompetition.DateOfCompetition_Id and DateOfCompetition.Country_Name =  Сountries.Country_Name
+AND  DateOfCompetition.DateOfCompetition_Id IN ((SELECT DateOfCompetition_Id FROM  DateOfCompetition WHERE DateEvent  BETWEEN '2023-05-06' AND '2027-05-26' ))))
+INNER JOIN TypeSport ON DateOfCompetition.id_Sport = TypeSport.id_Sport 
+
+group by DateOfCompetition.Country_Name )as fas )AS Max;        
+
+
+(SELECT COUNT(DateOfCompetition.Country_Name)   as count 
+FROM (((( Сountries
+INNER JOIN Сommands )	 
+INNER JOIN Results 			 ON  EnemyTeam_Id = Command_Id)
+INNER JOIN DateOfCompetition ON  results.DateOfCompetition_Id = DateOfCompetition.DateOfCompetition_Id and DateOfCompetition.Country_Name =  Сountries.Country_Name
+AND  DateOfCompetition.DateOfCompetition_Id IN ((SELECT DateOfCompetition_Id FROM  DateOfCompetition WHERE DateEvent  BETWEEN '2023-05-06' AND '2027-05-26' ))))
+INNER JOIN TypeSport ON DateOfCompetition.id_Sport = TypeSport.id_Sport 
+group by DateOfCompetition.Country_Name );
+
+
+SELECT DateOfCompetition.Country_Name,COUNT(DateOfCompetition.Country_Name)  as count 
 FROM Сountries
-INNER JOIN Сommands 		 
+INNER JOIN Сommands
 INNER JOIN Results 			 ON  EnemyTeam_Id = Command_Id
-INNER JOIN DateOfCompetition ON  results.DateOfCompetition_Id = DateOfCompetition.DateOfCompetition_Id
-and DateOfCompetition.Country_Name =  Сountries.Country_Name
+INNER JOIN DateOfCompetition ON  results.DateOfCompetition_Id = DateOfCompetition.DateOfCompetition_Id 
+AND  DateOfCompetition.DateOfCompetition_Id IN ((SELECT DateOfCompetition_Id FROM  DateOfCompetition 
+WHERE DateEvent  BETWEEN '2023-05-06' AND '2030-05-26' ))and DateOfCompetition.Country_Name =  Сountries.Country_Name
 INNER JOIN TypeSport ON DateOfCompetition.id_Sport = TypeSport.id_Sport
-AND  DateOfCompetition.DateOfCompetition_Id IN ((SELECT DateOfCompetition_Id FROM  DateOfCompetition WHERE DateEvent  BETWEEN '2023-05-06' AND '2030-05-26' ))
-group by Сountries.Country_Name
-order by Count_Competition desc limit 1;
+group by results.DateOfCompetition_Id
+HAVING GetMaxCount()  = count;        
+	
+DROP FUNCTION   GetMaxCount;     
+DELIMITER $$
+CREATE FUNCTION GetMaxCount()
+RETURNS int(7)
+DETERMINISTIC
+BEGIN
+	DECLARE max_value int(7);
+   SET max_value =(SELECT MAX(result.fas) 
+    
+FROM  (SELECT count(DateOfCompetition.Country_Name)  as fas, DateOfCompetition.Country_Name
+FROM ((((Сountries
+INNER JOIN Сommands)
+INNER JOIN Results 			 ON  EnemyTeam_Id = Command_Id)
+INNER JOIN DateOfCompetition ON  results.DateOfCompetition_Id = DateOfCompetition.DateOfCompetition_Id 
+AND  DateOfCompetition.DateOfCompetition_Id IN ((SELECT DateOfCompetition_Id FROM  DateOfCompetition 
+WHERE DateEvent  BETWEEN '2023-05-06' AND '2030-05-26' ))and DateOfCompetition.Country_Name =  Сountries.Country_Name) 
+INNER JOIN TypeSport ON DateOfCompetition.id_Sport = TypeSport.id_Sport
+) group by results.DateOfCompetition_Id) as result) ;
+	RETURN (max_value);
+END $$
+DELIMITER ;
+SELECT GetMaxCount();
+ 
 /*-------------------*/
 
 /*Знайти всі країни, де проводилися Чемпіонати світу із зазначеного виду спорту*/
