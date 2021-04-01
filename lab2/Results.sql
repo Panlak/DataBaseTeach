@@ -98,30 +98,6 @@ AND Team_Id IN ((SELECT Command_Id FROM Сommands WHERE Country_Name_Team  = "Uk
 
 
 /* Знайти країну, де проводилося максимальне число змагань за вказаний період. */
-
-SELECT (SELECT MAX(fas.count) 
-FROM
-DateOfCompetition,(SELECT COUNT(DateOfCompetition.Country_Name)   as count 
-FROM (((( Сountries
-INNER JOIN Сommands )	 
-INNER JOIN Results 			 ON  EnemyTeam_Id = Command_Id)
-INNER JOIN DateOfCompetition ON  results.DateOfCompetition_Id = DateOfCompetition.DateOfCompetition_Id and DateOfCompetition.Country_Name =  Сountries.Country_Name
-AND  DateOfCompetition.DateOfCompetition_Id IN ((SELECT DateOfCompetition_Id FROM  DateOfCompetition WHERE DateEvent  BETWEEN '2023-05-06' AND '2027-05-26' ))))
-INNER JOIN TypeSport ON DateOfCompetition.id_Sport = TypeSport.id_Sport 
-
-group by DateOfCompetition.Country_Name )as fas )AS Max;        
-
-
-(SELECT COUNT(DateOfCompetition.Country_Name)   as count 
-FROM (((( Сountries
-INNER JOIN Сommands )	 
-INNER JOIN Results 			 ON  EnemyTeam_Id = Command_Id)
-INNER JOIN DateOfCompetition ON  results.DateOfCompetition_Id = DateOfCompetition.DateOfCompetition_Id and DateOfCompetition.Country_Name =  Сountries.Country_Name
-AND  DateOfCompetition.DateOfCompetition_Id IN ((SELECT DateOfCompetition_Id FROM  DateOfCompetition WHERE DateEvent  BETWEEN '2023-05-06' AND '2027-05-26' ))))
-INNER JOIN TypeSport ON DateOfCompetition.id_Sport = TypeSport.id_Sport 
-group by DateOfCompetition.Country_Name );
-
-
 SELECT DateOfCompetition.Country_Name,COUNT(DateOfCompetition.Country_Name)  as count 
 FROM Сountries
 INNER JOIN Сommands
@@ -154,7 +130,7 @@ INNER JOIN TypeSport ON DateOfCompetition.id_Sport = TypeSport.id_Sport
 	RETURN (max_value);
 END $$
 DELIMITER ;
-SELECT GetMaxCount();
+SELECT GetMaxCount();	
  
 /*-------------------*/
 
@@ -191,8 +167,7 @@ AND DateOfCompetition.Country_Name = "Ukraine"))
 AND DateOfCompetition.id_Sport = TypeSport.id_Sport
 AND Сountries.Country_Name = DateOfCompetition.Country_Name
 and EnemyTeam_Id = Сommands.Command_Id
-AND results.DateOfCompetition_Id = DateOfCompetition.DateOfCompetition_Id
-group by Result_Id;
+AND results.DateOfCompetition_Id = DateOfCompetition.DateOfCompetition_Id;
 /*-------------------*/
 
 /*Знайти всі команди, які брали участь в змаганнях заданого рангу згруповані за видами спорту*/
@@ -204,8 +179,8 @@ AND DateOfCompetition.id_Sport = TypeSport.id_Sport
 AND Сountries.Country_Name = DateOfCompetition.Country_Name
 and EnemyTeam_Id = Сommands.Command_Id
 AND results.DateOfCompetition_Id = DateOfCompetition.DateOfCompetition_Id
-group by Result_Id
-order by TypeSport.id_Sport;
+group by DateOfCompetition.id_Sport;
+
 /*-------------------*/
 
 
@@ -223,4 +198,31 @@ AND Сountries.Country_Name = DateOfCompetition.Country_Name
 and EnemyTeam_Id = Сommands.Command_Id
 AND results.DateOfCompetition_Id = DateOfCompetition.DateOfCompetition_Id;
 /*-------------------*/
+
+SELECT TypeSport.NAME_Sport, GROUP_CONCAT(distinct Command_Name)
+FROM ((((Сountries
+INNER JOIN Сommands)
+INNER JOIN Results 			 ON  EnemyTeam_Id  IN (Сommands.Command_Id))
+INNER JOIN DateOfCompetition ON  results.DateOfCompetition_Id = DateOfCompetition.DateOfCompetition_Id 
+AND DateOfCompetition.DateOfCompetition_Id IN ((SELECT DateOfCompetition_Id FROM DateOfCompetition WHERE Rang_Competition = 'Олімпійські_ігри')))
+INNER JOIN TypeSport ON  DateOfCompetition.id_Sport = TypeSport.id_Sport) GROUP BY  TypeSport.NAME_Sport;
+
+
+
+SELECT Result_Id,EnemyTeam_Id,Team_Id,Result,DateOfCompetition.Rang_Competition,NAME_Sport,DateOfCompetition.Country_Name,DateOfCompetition.DateEvent
+FROM Results,Сountries,TypeSport,DateOfCompetition,Сommands
+WHERE	 
+(DateOfCompetition.DateOfCompetition_Id IN ((SELECT DateOfCompetition_Id FROM DateOfCompetition WHERE Rang_Competition = 'Олімпійські_ігри'))
+AND DateOfCompetition.id_Sport = TypeSport.id_Sport
+AND Сountries.Country_Name = DateOfCompetition.Country_Name
+and EnemyTeam_Id = Сommands.Command_Id
+AND results.DateOfCompetition_Id = DateOfCompetition.DateOfCompetition_Id
+group by TypeSport.NAME_Sport) as op;
+
+
+SET sql_mode = '';
+/*Знайти всі команди, які брали участь в змаганнях заданого рангу згруповані за видами спорту*/
+
+
+
 
