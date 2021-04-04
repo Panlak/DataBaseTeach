@@ -212,10 +212,73 @@ CREATE VIEW order_lines_v AS SELECT ol.id , i.description, ol.qty
 FROM order_lines ol JOIN items i ON ol.item_id = i.id;
 
 /*----------------------------------------------------------------*/
-UPDATE order_lines_v SET  description = 'Шоруп' WHERE id = 1;
+UPDATE order_lines_v SET  description = 'Шоруп' WHERE id = 3;
 /*ERROR:  cannot update view "order_lines_v"
 DETAIL:  Views that do not select from a single table or view are not automatically updatable.
 HINT:  To enable updating the view, provide an INSTEAD OF UPDATE trigger or an unconditional ON UPDATE DO INSTEAD rule.
 SQL state: 55000*/
 	
+/*Ми можемо визначити тригер. Тригерна функція може виглядати наприклад так */
 
+CREATE OR REPLACE FUNCTION view_update() RETURNS trigger AS $$
+BEGIN
+	UPDATE order_lines 
+	SET item_id = (SELECT id FROM items WHERE description = NEW.description),
+	qty = NEW.qty;
+	RETURN NEW;
+EXCEPTION
+	WHEN not_null_violation THEN
+		RAISE EXCEPTION 'Вкзаної позиції "%" не існує', NEW.description;
+END;
+$$ LANGUAGE plpgsql;
+	
+/*Сам тригер*/
+
+
+CREATE TRIGGER order_lines_v_upd
+INSTEAD OF UPDATE ON order_lines_v
+FOR EACH ROW EXECUTE PROCEDURE view_update();
+
+/*Перевіремо*/
+
+
+UPDATE order_lines_v SET qty = qty + 10 RETURNING *;
+/*ТАБЛИЦЯ ПРЕДСТАВЛЕННЯ*/
+SELECT * FROM order_lines_v;
+/*------------------*/
+
+/*Основна таблиця*/
+SELECT * FROM order_lines;
+/*------------------*/
+
+
+
+/*Тригери подій*/
+
+/*Приклад тригера для події DLL_COMMAND_END*/
+
+/*Зробимо функцію котра описує контекст виклика*/
+
+CREATE OR REPLACE FUNCTION describe_ddl() RETURNS event_trigger AS $$
+DECLARE
+	r record;
+BEGIN
+	--для події DLL_COMMAND_END контекст виклика в спеціальній функції
+	FOR r IN SELECT * FROM pg_event_trigger_ddl_commands() LOOP
+		RAISE NOTICE '%. тип: %, OID: %, імя: % ',
+			r.command_tag, r.object_type, r.objid, r.object_identity;
+	END LOOP;
+	
+	--Функції тригера подій не потрібно повертати значення
+END;
+$$ LANGUAGE plpgsql;
+
+
+/*Сам тригер*/
+
+	CREATE EVENT TRIGGER after_ddl
+	ON ddl_command_end EXECUTE PROCEDURE describe_ddl();
+	
+CREATE TABLE t3(id serial primary key);	
+	
+	
