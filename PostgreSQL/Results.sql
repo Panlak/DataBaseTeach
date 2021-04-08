@@ -45,7 +45,7 @@ UPDATE Results SET Prize = 1200 WHERE Result_Id = 1;
 DELETE from Results where Result_Id = 1;
 
 INSERT INTO Results (EnemyTeam_Id,Team_Id,DateOfCompetition_Id,FightResult,Prize)
-VALUES(11,6,2,'{Draw}',21000)
+VALUES(11,3,2,'{Win}',21000)
 
 
 SELECT * FROM Results;

@@ -27,8 +27,8 @@ VALUES
 ('Avengers','Ukraine',0);
 
 UPDATE Сommands SET Earnings = 0 WHERE Command_Id = 6;
-
-
+UPDATE Сommands SET Earnings = 0 WHERE Command_Id = 4;
+UPDATE Сommands SET Earnings = 0 WHERE Command_Id = 3;
 SELECT * FROM Сommands;
 
 DROP TRIGGER emp_audit ON Results
@@ -50,11 +50,12 @@ CREATE OR REPLACE FUNCTION process_emp_audit () RETURNS TRIGGER AS $$
 	if((NEW.FightResult = '{Lose}')) then
 	if((select Earnings from Сommands where Сommands.Command_Id =  NEW.Team_Id)= 0 )then
 			UPDATE Сommands
-				SET Earnings = new.Prize where Сommands.Command_Id =  NEW.Team_Id;
+				SET Earnings = new.Prize where Сommands.Command_Id =  NEW.EnemyTeam_Id;
 		else 
 			UPDATE Сommands
-			SET Earnings = Earnings+new.Prize where Сommands.Command_Id =  NEW.Team_Id;
+			SET Earnings = Earnings+new.Prize where Сommands.Command_Id =  NEW.EnemyTeam_Id;
 		end if;
+		
 	end if;
 	END IF;	
 	IF(TG_OP = 'UPDATE') THEN
