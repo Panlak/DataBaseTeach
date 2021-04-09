@@ -1,6 +1,6 @@
 DROP TABLE Results;
 TRUNCATE TABLE Results;
-TRUNCATE TABLE Results RESTART IDENTITY;
+
 CREATE TABLE Results
 (
 	Result_Id SERIAL NOT NULL PRIMARY KEY,
@@ -17,6 +17,7 @@ CREATE TABLE Results
     CONSTRAINT DateOfCompetition
     FOREIGN KEY (DateOfCompetition_Id) REFERENCES DateOfCompetition(DateOfCompetition_Id)
 );
+TRUNCATE TABLE Results RESTART IDENTITY;
 INSERT INTO Results (EnemyTeam_Id,Team_Id,DateOfCompetition_Id,FightResult,Prize)
 VALUES
 (4,6,2,'{Lose}',20000),
@@ -41,14 +42,15 @@ VALUES
 (2,12,14,'{Lose}',15000),
 (12,3,9,'{Draw}',150000);
 
-UPDATE Results SET Prize = 1200 WHERE Result_Id = 1;
-DELETE from Results where Result_Id = 1;
+UPDATE Results SET Prize = 1000 WHERE Result_Id = 2;
+DELETE from Results where Result_Id = 3;
+SELECT * FROM Results;
 
 INSERT INTO Results (EnemyTeam_Id,Team_Id,DateOfCompetition_Id,FightResult,Prize)
-VALUES(11,3,2,'{Win}',21000)
+VALUES(11,3,2,'{Draw}',21000)
 
 
-SELECT * FROM Results;
+
 
 
 select Result_Id,EnemyTeam_Id,Team_Id,NAME_Sport,Rang_Competition,DateOfCompetition.DateOfCompetition_Id,FightResult from Results,Сountries,TypeSport,DateOfCompetition,Сommands
