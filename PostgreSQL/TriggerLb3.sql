@@ -1,3 +1,7 @@
+DROP TRIGGER emp_audit ON Results
+DROP FUNCTION process_emp_audit;
+
+
 CREATE OR REPLACE FUNCTION process_emp_audit () RETURNS TRIGGER AS $$
 BEGIN
 IF TG_LEVEL = 'ROW' THEN

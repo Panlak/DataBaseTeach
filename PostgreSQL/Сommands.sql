@@ -26,37 +26,5 @@ VALUES
 ('Vikings','Netherlands',0),
 ('Avengers','Ukraine',0);
 
-UPDATE Сommands SET Earnings = 0 WHERE Command_Id = 1;
-UPDATE Сommands SET Earnings = 0 WHERE Command_Id = 2;
-UPDATE Сommands SET Earnings = 0 WHERE Command_Id = 3;
-UPDATE Сommands SET Earnings = 0 WHERE Command_Id = 4;
-UPDATE Сommands SET Earnings = 0 WHERE Command_Id = 5;
-UPDATE Сommands SET Earnings = 0 WHERE Command_Id = 6;
-UPDATE Сommands SET Earnings = 0 WHERE Command_Id = 7;
-UPDATE Сommands SET Earnings = 0 WHERE Command_Id = 8;
-UPDATE Сommands SET Earnings = 0 WHERE Command_Id = 9;
-UPDATE Сommands SET Earnings = 0 WHERE Command_Id = 10;
-UPDATE Сommands SET Earnings = 0 WHERE Command_Id = 11;
-UPDATE Сommands SET Earnings = 0 WHERE Command_Id = 12;
 SELECT * FROM Сommands;
-
-DROP TRIGGER emp_audit ON Results
-DROP FUNCTION process_emp_audit;
-
-	
-DROP TRIGGER trig_copy ON Сommands;
-	
-CREATE TRIGGER trig_copy
-     AFTER INSERT ON Сommands VALUE(Earnings)
-     FOR EACH ROW
-     EXECUTE PROCEDURE earnings();
-
-SELECT * FROM Сommands;
-
-
-
-
-
-
-
 

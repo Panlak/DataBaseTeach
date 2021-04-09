@@ -106,22 +106,6 @@ SELECT * FROM VWresults;
 
 
 
-
-
-
-
-
-
-
-
-
-	
-SELECT * FROM VWresults WHERE Sport IN((SELECT TypeSport.NAME_Sport FROM TypeSport WHERE NAME_Sport = 'Легка атлетика'));
-UNION
-
-
-
-
 CREATE OR REPLACE FUNCTION describe() RETURNS trigger as $$ 
 DECLARE
 	rec record;
