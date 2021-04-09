@@ -92,14 +92,14 @@ AND DateOfCompetition.SportId = TypeSport.id_Sport;
 DROP VIEW Prizez;
 CREATE 
 VIEW Prizez as
-SELECT Prize FROM  Results,Сountries,TypeSport,DateOfCompetition,Сommands
+SELECT distinct Command_Name,Earnings,COUNT(FightResult ='{Win}') AS CountWin,COUNT(FightResult ='{Lose}') AS CountLose FROM  Results,Сountries,TypeSport,DateOfCompetition,Сommands
 WHERE 
 Results.DateOfCompetition_Id = DateOfCompetition.DateOfCompetition_Id
 AND Сommands.Command_Id IN (EnemyTeam_Id)
 AND Country_Name_Team = Сountries.Country_Name
-AND DateOfCompetition.SportId = TypeSport.id_Sport;
+AND DateOfCompetition.SportId = TypeSport.id_Sport GROUP BY Command_Name,Earnings;
 ------------------------------------------------------
-SELECT * FROM Prizez;
+SELECT Command_Name,Earnings, CountWin,CountLose FROM Prizez ;
 
 
 SELECT * FROM VWresults;
