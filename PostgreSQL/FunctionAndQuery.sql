@@ -96,5 +96,13 @@ $$ LANGUAGE plpgsql;
 SELECT NoLoses();
 
 
+CREATE  OR REPLACE FUNCTION MaxprocentWin() RETURNS bigint AS $$
+DECLARE
+max_value bigint;
+BEGIN
+max_value = (SELECT max(Procent) FROM Prizez);
+RETURN max_value;
+END;
+$$ LANGUAGE plpgsql;
 
 

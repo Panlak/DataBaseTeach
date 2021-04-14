@@ -71,41 +71,6 @@ SELECT * FROM Results_history;
 
 
 
-------------------------------------------------------
-DROP VIEW VWresults;
---------------------
-CREATE VIEW VWresults AS
-SELECT EnemyTeam_Id as EnemyTeam,Team_Id as TEAM,NAME_Sport as Sport,Rang_Competition,
-DateOfCompetition.Country_NAME as CompetitionCountry,FightResult as Results,Prize 
-FROM Results,Сountries,TypeSport,DateOfCompetition,Сommands
-WHERE 
-Results.DateOfCompetition_Id = DateOfCompetition.DateOfCompetition_Id 
-AND  DateOfCompetition.DateOfCompetition_Id IN((SELECT DateOfCompetition_Id FROM DateOfCompetition WHERE Rang_Competition = '{Чемпіонат_світу}'))
-AND Сommands.Command_Id IN (Team_Id)
-AND  Result_Id IN ((SELECT Result_Id FROM Results WHERE Prize > 20000))
-AND Country_Name_Team = Сountries.Country_Name
-AND DateOfCompetition.SportId = TypeSport.id_Sport
-UNION
-SELECT EnemyTeam_Id as EnemyTeam,Team_Id as TEAM,NAME_Sport as Sport,Rang_Competition,
-DateOfCompetition.Country_NAME as CompetitionCountry,FightResult as Results,Prize 
-FROM Results,Сountries,TypeSport,DateOfCompetition,Сommands
-WHERE 
-Results.DateOfCompetition_Id = DateOfCompetition.DateOfCompetition_Id 
-AND  DateOfCompetition.DateOfCompetition_Id IN((SELECT DateOfCompetition_Id FROM DateOfCompetition WHERE Rang_Competition = '{Чемпіонат_Європи}'))
-AND  Result_Id IN ((SELECT Result_Id FROM Results WHERE Prize > 20000))
-AND Сommands.Command_Id IN (Team_Id)
-AND Country_Name_Team = Сountries.Country_Name
-AND DateOfCompetition.SportId = TypeSport.id_Sport;
-------------------------------------------------------
-SELECT * FROM VWresults;
-
-------------------------------------------------------
-
-------------------------------------------------------
-
-
-
-
 
 
 
