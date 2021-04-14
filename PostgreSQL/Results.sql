@@ -9,7 +9,7 @@ CREATE TABLE Results
 	DateOfCompetition_Id INT NOT NULL,
     FightResult VARCHAR(20)[] NOT NULL
 	check (FightResult <@ ARRAY['Win', 'Lose', 'Draw']::varchar[]),
-	Prize bigint ,
+	Prize float ,
     CONSTRAINT EnemyTeam_NAME
     FOREIGN KEY (EnemyTeam_Id) REFERENCES Сommands(Command_Id),
     CONSTRAINT Team_Id
@@ -43,25 +43,29 @@ VALUES
 (12,3,9,'{Draw}',150000);
 
 
+
+INSERT INTO Results (EnemyTeam_Id,Team_Id,DateOfCompetition_Id,FightResult,Prize)
+VALUES (12,2,14,'{Lose}',15000)
+
 SELECT * FROM Results;
 
+--Перевірка на підрахунок виграшу
+SELECT * FROM Сommands;
+
+-- перевірка тригера на Update
 UPDATE Results SET Prize = 1000 WHERE Result_Id = 2;
-DELETE from Results where Result_Id = 3;
-SELECT * FROM Results;
 
+--перевірка тригера на DELETE
+DELETE from Results where Result_Id = 22;
+
+
+--перевіка тригера на INSERT
 INSERT INTO Results (EnemyTeam_Id,Team_Id,DateOfCompetition_Id,FightResult,Prize)
 VALUES(11,3,2,'{Draw}',21000)
 
 
-
-
-CREATE VIEW Nice as 
-select Result_Id,EnemyTeam_Id,Team_Id,NAME_Sport,Rang_Competition,DateOfCompetition.DateOfCompetition_Id,FightResult from Results,Сountries,TypeSport,DateOfCompetition,Сommands
-WHERE 
-Results.DateOfCompetition_Id = DateOfCompetition.DateOfCompetition_Id
-AND Сommands.Command_Id IN (EnemyTeam_Id)
-AND Country_Name_Team = Сountries.Country_Name
-AND DateOfCompetition.SportId = TypeSport.id_Sport;
+TRUNCATE TABLE Results_history RESTART IDENTITY;		
+SELECT * FROM Results_history;	
 
 
 
@@ -96,41 +100,15 @@ AND DateOfCompetition.SportId = TypeSport.id_Sport;
 SELECT * FROM VWresults;
 
 ------------------------------------------------------
-DROP VIEW Prizez;
-CREATE 
-VIEW Prizez as
-SELECT Command_Name,Сommands.Earnings as Earnings,SUM(
-CASE 
-WHEN Сommands.Command_Id IN (Team_Id) 
-AND Results.Result_Id IN((SELECT Result_Id FROM Results WHERE FightResult = '{Win}'))THEN 1  
-WHEN Сommands.Command_Id IN (EnemyTeam_Id) 
-AND Results.Result_Id IN((SELECT Result_Id FROM Results WHERE FightResult = '{Lose}'))THEN 1  
-ELSE 0 END) AS CountWin,
-SUM(
-CASE 
-WHEN Сommands.Command_Id IN (Team_Id) 
-AND Results.Result_Id IN((SELECT Result_Id FROM Results WHERE FightResult = '{Win}'))THEN 0  
-WHEN Сommands.Command_Id IN (EnemyTeam_Id) 
-AND Results.Result_Id IN((SELECT Result_Id FROM Results WHERE FightResult = '{Lose}'))THEN 0  
-ELSE 1 END) AS CountLose
-FROM  Results,Сountries,TypeSport,DateOfCompetition,Сommands
-WHERE 
-Results.DateOfCompetition_Id = DateOfCompetition.DateOfCompetition_Id
-AND Сommands.Command_Id IN (EnemyTeam_Id,Team_Id)
-AND Country_Name_Team = Сountries.Country_Name
-AND DateOfCompetition.SportId = TypeSport.id_Sport GROUP BY Command_Name,Earnings ORDER BY CountWin DESC;
+
 ------------------------------------------------------
 
 
 
-SELECT * FROM Prizez;
 
-ALTER VIEW Prizez ADD COLUMN CONCAT100% *5/(CountLose + CountWin)
 
-SELECT Command_Name,CountWin,Earnings FROM Prizez GROUP BY Command_Name,CountWin,Earnings   HAVING  CountWin = maxWins();
-SELECT Command_Name,CountLose,Earnings FROM Prizez GROUP BY Command_Name,CountLose,Earnings HAVING  CountLose = MaxLoses();
-SELECT Command_Name,CountLose,Earnings FROM Prizez GROUP BY Command_Name,CountLose,Earnings HAVING  CountLose = NoLoses();
-SELECT Command_Name,CountWin,Earnings FROM Prizez GROUP BY Command_Name,CountWin,Earnings   HAVING  CountWin = NoWin();
+
+
 
 
 

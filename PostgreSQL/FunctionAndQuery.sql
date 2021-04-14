@@ -48,8 +48,8 @@ SELECT maxWins();
 
 
 
-
-CREATE OR REPLACE FUNCTION maxWinsBetter() RETURNS bigint AS $$
+DROP FUNCTION  maxWins();
+CREATE OR REPLACE FUNCTION maxWins() RETURNS bigint AS $$
 DECLARE
 max_value bigint;
 BEGIN
@@ -60,6 +60,7 @@ $$ LANGUAGE plpgsql;
 SELECT maxWins();
 
 
+DROP FUNCTION  NoWin();
 CREATE OR REPLACE FUNCTION NoWin() RETURNS bigint AS $$
 DECLARE
 max_value bigint;
@@ -70,7 +71,7 @@ END;
 $$ LANGUAGE plpgsql;
 SELECT NoWin();
 
-
+DROP FUNCTION MaxLoses();
 CREATE OR REPLACE FUNCTION MaxLoses() RETURNS bigint AS $$
 DECLARE
 max_value bigint;
@@ -83,7 +84,7 @@ SELECT MaxLoses();
 
 
 
-
+DROP FUNCTION NoLoses();
 CREATE OR REPLACE FUNCTION NoLoses() RETURNS bigint AS $$
 DECLARE
 max_value bigint;
@@ -93,7 +94,6 @@ RETURN max_value;
 END;
 $$ LANGUAGE plpgsql;
 SELECT NoLoses();
-
 
 
 
