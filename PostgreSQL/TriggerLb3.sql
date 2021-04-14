@@ -84,4 +84,17 @@ $$ LANGUAGE plpgsql;
 			
 CREATE TRIGGER emp_audit
 AFTER INSERT OR UPDATE  OR DELETE ON Results
-    FOR EACH ROW EXECUTE PROCEDURE process_emp_audit ();	
+    FOR EACH ROW EXECUTE PROCEDURE process_emp_audit ();
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
