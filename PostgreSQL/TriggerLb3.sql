@@ -2,7 +2,7 @@ DROP TRIGGER emp_audit ON Results
 DROP FUNCTION process_emp_audit;
 
 
-CREATE OR REPLACE FUNCTION process_emp_audit () RETURNS TRIGGER AS $$
+CREATE OR REPLACE FUNCTION Earnings() RETURNS TRIGGER AS $$
 BEGIN
 IF TG_LEVEL = 'ROW' THEN
 	CASE TG_OP
@@ -84,8 +84,8 @@ $$ LANGUAGE plpgsql;
 			
 CREATE TRIGGER emp_audit
 AFTER INSERT OR UPDATE  OR DELETE ON Results
-    FOR EACH ROW EXECUTE PROCEDURE process_emp_audit ();
---------------------------------------------------	
+    FOR EACH ROW EXECUTE PROCEDURE Earnings ();
+--------------------------------------------------------------------------	
 	
 /*Створюю тригер і історичну таблицю*/	
 
@@ -93,7 +93,7 @@ DROP TABLE Results_history;
 
 DROP FUNCTION Results_history();
 
-CREATE TABLE Results_history (LIKE Results)
+CREATE TABLE Results_history (LIKE Results) -- таблиця за строктурую так як Results
 
 ALTER TABLE Results_history ADD  start_date timestamp, ADD end_date timestamp;
 
@@ -135,7 +135,6 @@ FOR EACH ROW EXECUTE PROCEDURE history_delete();
 
 
 DROP TRIGGER Results_history_update ON Results
-
 CREATE TRIGGER Results_history_update
 AFTER INSERT OR UPDATE ON Results
 FOR EACH ROW EXECUTE PROCEDURE history_insert();	

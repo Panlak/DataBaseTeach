@@ -1,9 +1,9 @@
 DROP VIEW Prizez;
 CREATE 
 VIEW Prizez as
-SELECT Command_Name,Earnings,CountWin ,CountLose,  Concat(round(CountWin/(CountLose + CountWin),2),'%') AS procent FROM
-(SELECT Command_Name,Сommands.Earnings as Earnings,SUM(
-CASE 
+SELECT Command_Name,Earnings,CountWin ,CountLose,  
+Concat(round(CountWin/(CountLose + CountWin),2),'%') AS procent FROM
+(SELECT Command_Name,Сommands.Earnings as Earnings,SUM(CASE 												
 WHEN Сommands.Command_Id IN (Team_Id) 
 AND Results.Result_Id IN((SELECT Result_Id FROM Results WHERE FightResult = '{Win}'))THEN 1.0  
 WHEN Сommands.Command_Id IN (EnemyTeam_Id) 
@@ -30,12 +30,12 @@ AND DateOfCompetition.SportId = TypeSport.id_Sport GROUP BY Command_Name,Earning
 SELECT * FROM Prizez;
 
 
-SELECT Command_Name,CountWin,Earnings,Procent  FROM Prizez WHERE  Procent =  MaxprocentWin();
-SELECT Command_Name,CountWin,Earnings,Procent  FROM Prizez WHERE  CountWin = maxWins();
-SELECT Command_Name,CountLose,Earnings,Procent FROM Prizez WHERE  CountLose= MaxLoses();
-SELECT Command_Name,CountLose,Earnings,Procent FROM Prizez WHERE  CountLose = NoLoses();
-SELECT Command_Name,CountWin,Earnings,Procent  FROM Prizez WHERE  CountWin = NoWin();
-
+SELECT Command_Name,CountWin,CountLose,Earnings,Procent  FROM Prizez WHERE  Procent   = MaxprocentWin();
+SELECT Command_Name,CountWin,CountLose,Earnings,Procent  FROM Prizez WHERE  CountWin  = maxWins();
+SELECT Command_Name,CountWin,CountLose,Earnings,Procent  FROM Prizez WHERE  CountLose = MaxLoses();
+SELECT Command_Name,CountWin,CountLose,Earnings,Procent  FROM Prizez WHERE  CountLose = NoLoses();
+SELECT Command_Name,CountWin,CountLose,Earnings,Procent  FROM Prizez WHERE  CountWin  = NoWin();
+SELECT Command_Name,CountWin,CountLose,Earnings,Procent  FROM Prizez WHERE	Earnings  = MaxEarnings();	
 
 
 
@@ -67,6 +67,7 @@ AND DateOfCompetition.SportId = TypeSport.id_Sport;
 
 SELECT * FROM VWresults;
 
+SELECT EnemyTeam,TEAM,Sport,Prize  FROM VWresults WHERE sport = 'CSGO';
 
 
 

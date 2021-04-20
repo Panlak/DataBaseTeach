@@ -65,7 +65,7 @@ CREATE OR REPLACE FUNCTION NoWin() RETURNS bigint AS $$
 DECLARE
 max_value bigint;
 BEGIN
-max_value = (SELECT MIN(CountWin) FROM Prizez);
+max_value = 0;
 RETURN max_value;
 END;
 $$ LANGUAGE plpgsql;
@@ -89,20 +89,32 @@ CREATE OR REPLACE FUNCTION NoLoses() RETURNS bigint AS $$
 DECLARE
 max_value bigint;
 BEGIN
-max_value = (SELECT Min(CountLose) FROM Prizez);
+max_value = 0;
 RETURN max_value;
 END;
 $$ LANGUAGE plpgsql;
 SELECT NoLoses();
 
-
-CREATE  OR REPLACE FUNCTION MaxprocentWin() RETURNS bigint AS $$
+DROP FUNCTION MaxprocentWin();
+CREATE  OR REPLACE FUNCTION MaxprocentWin() RETURNS text AS $$
 DECLARE
-max_value bigint;
+max_value text;
 BEGIN
 max_value = (SELECT max(Procent) FROM Prizez);
 RETURN max_value;
 END;
 $$ LANGUAGE plpgsql;
+select MaxprocentWin();
+
+
+
+CREATE OR REPLACE FUNCTION MaxEarnings() RETURNS float AS $$
+DECLARE
+max_value float;
+BEGIN
+RETURN  (SELECT max(Earnings) FROM Prizez);
+END;
+$$ LANGUAGE plpgsql;
+SELECT MaxEarnings();
 
 
