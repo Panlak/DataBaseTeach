@@ -190,36 +190,53 @@ SELECT * FROM Events;
 -------------------------------------------------------------
 -------------------------------------------------------------
 -------------------------------------------------------------
-
+DROP TABLE Staff;
 CREATE TABLE Staff
 (
-	Staff_id serial NOT NULL,
+	Staff_id serial,
 	NameCommand varchar(45) NOT NULL,
-	DepartureTime date NOT NULL,
 	CountPeople int NOT NULL,
-	Notes varchar(255) NOT NULL,
 	City_Id int NOT NULL,
-	Event_id int NOT NULL,
-	Subscription_Id int NOT NULL,
-	SecuritycSubscription_Customer_id int NOT NULL,
-	SecuritycSubscription_Service_id int NOT NULL,
-	SecuritycSubscription_Service_Security_Id int NOT NULL,
-	PRIMARY KEY(Staff_id,Event_id,Subscription_Id,SecuritycSubscription_Customer_id,SecuritycSubscription_Service_id,SecuritycSubscription_Service_Security_Id),
-	FOREIGN KEY (Event_id,Subscription_Id,SecuritycSubscription_Customer_id,SecuritycSubscription_Service_id,SecuritycSubscription_Service_Security_Id)
-	REFERENCES	Events(Event_id,Subscription_Id ,SecuritycSubscription_Customer_id,SecuritycSubscription_Service_id,SecuritycSubscription_Service_Security_Id),
+	PRIMARY KEY(Staff_id),
 	FOREIGN KEY (City_Id) REFERENCES City(City_Id)
 );
 
+INSERT INTO Staff(NameCommand,CountPeople,City_Id)
+VALUES('Bears',4,1),
+	  ('sharks',5,1),
+	  ('Rotvelers',12,2);
 SELECT * FROM Staff;
 
-INSERT INTO Staff(NameCommand,DepartureTime,CountPeople,Notes,City_Id,Event_id,Subscription_Id,SecuritycSubscription_Customer_id,SecuritycSubscription_Service_id,SecuritycSubscription_Service_Security_Id)
-VALUES('Bears',(select now()),4,'3 robber',1,1,3,4,2,2);
-INSERT INTO Staff(NameCommand,DepartureTime,CountPeople,Notes,City_Id,Event_id,Subscription_Id,SecuritycSubscription_Customer_id,SecuritycSubscription_Service_id,SecuritycSubscription_Service_Security_Id)
-VALUES('sharks',(select now()),2,'bank',2,2,2,1,1,1);
-INSERT INTO Staff(NameCommand,DepartureTime,CountPeople,Notes,City_Id,Event_id,Subscription_Id,SecuritycSubscription_Customer_id,SecuritycSubscription_Service_id,SecuritycSubscription_Service_Security_Id)
-VALUES('sharks',(select now()),2,'bank',2,3,1,1,1,1);
+DROP TABLE DeparutureInfo;
+CREATE TABLE DeparutureInfo
+(
+	DeparutureInfo_id serial,
+	notes varchar(255) NOT NULL,
+	DepartureTime timestamp NOT NULL,
+	Event_id int NOT NULL,
+	Subscription_Id int NOT NULL,
+	Staff_id INT NOT NULL,
+	SecuritycSubscription_Customer_id int NOT NULL,
+	SecuritycSubscription_Service_id int NOT NULL,
+	SecuritycSubscription_Service_Security_Id int NOT NULL,
+	PRIMARY KEY(DeparutureInfo_id,Staff_id,Event_id,Subscription_Id,SecuritycSubscription_Customer_id,SecuritycSubscription_Service_id,SecuritycSubscription_Service_Security_Id),
+	FOREIGN KEY (Event_id,Subscription_Id,SecuritycSubscription_Customer_id,SecuritycSubscription_Service_id,SecuritycSubscription_Service_Security_Id)
+    REFERENCES	Events(Event_id,Subscription_Id ,SecuritycSubscription_Customer_id,SecuritycSubscription_Service_id,SecuritycSubscription_Service_Security_Id),
+	FOREIGN KEY (Staff_id) REFERENCES  Staff(Staff_id)
+);
 
-SELECT * FROM Staff;
+INSERT INTO DeparutureInfo(Staff_id,DepartureTime,notes,Event_id,Subscription_Id,SecuritycSubscription_Customer_id,SecuritycSubscription_Service_id,SecuritycSubscription_Service_Security_Id)
+VALUES(1,(select now()),'3 robber',1,3,4,2,2);
+INSERT INTO DeparutureInfo(Staff_id,DepartureTime,notes,Event_id,Subscription_Id,SecuritycSubscription_Customer_id,SecuritycSubscription_Service_id,SecuritycSubscription_Service_Security_Id)
+VALUES(2,(select now()),'bank',2,2,1,1,1);
+INSERT INTO DeparutureInfo(Staff_id,DepartureTime,notes,Event_id,Subscription_Id,SecuritycSubscription_Customer_id,SecuritycSubscription_Service_id,SecuritycSubscription_Service_Security_Id)
+VALUES(3,(select now()),'bank',3,1,1,1,1);
+
+SELECT * FROM DeparutureInfo;
+
+
+
+
 
 
 
